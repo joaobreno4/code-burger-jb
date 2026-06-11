@@ -22,14 +22,21 @@ function handleDbError(res, err) {
   return res.status(500).json({ error: 'Erro interno do servidor.' });
 }
 
-// Wraps res.end to inject X-Response-Time before the response is sent
+// Wraps res.end to inject X-Response-Time before the response is sent.
+// The setHeader call is guarded: in Vercel's runtime res.write() can be
+// called before res.end(), which locks headers. Silently skip if that
+// happens so the actual response is never blocked.
 function withResponseTime(res) {
   const start = process.hrtime.bigint();
   const originalEnd = res.end.bind(res);
 
   res.end = (...args) => {
     const ms = Number(process.hrtime.bigint() - start) / 1e6;
-    res.setHeader('X-Response-Time', `${ms.toFixed(2)}ms`);
+    try {
+      if (!res.headersSent) {
+        res.setHeader('X-Response-Time', `${ms.toFixed(2)}ms`);
+      }
+    } catch (_) { /* headers already sent — safe to ignore */ }
     return originalEnd(...args);
   };
 }
