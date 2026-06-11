@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { Pool } = require('pg');
-const { withResponseTime, handleDbError } = require('./_lib/observe');
+const { logRequest, handleDbError, jsonLog } = require('./_lib/observe');
 
 const SECRET = process.env.JWT_SECRET || 'codeburger-dev-secret-change-in-prod';
 
@@ -33,14 +33,14 @@ async function ensureDbReady() {
       'INSERT INTO users (username, password_hash) VALUES ($1, $2) ON CONFLICT (username) DO NOTHING',
       ['admin', hash]
     );
-    console.log(`[${new Date().toISOString()}] [SEED] Admin user created in Neon DB`);
+    jsonLog('info', { message: 'admin user seeded into Neon DB' });
   }
 
   dbReady = true;
 }
 
 module.exports = async (req, res) => {
-  withResponseTime(res);
+  logRequest(req, res);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -71,7 +71,6 @@ module.exports = async (req, res) => {
     }
 
     const token = jwt.sign({ sub: user.username, role: 'admin' }, SECRET, { expiresIn: '8h' });
-    console.log(`[${new Date().toISOString()}] INFO POST /api/login — ${username} authenticated`);
     return res.json({ token });
   } catch (err) {
     return handleDbError(res, err);

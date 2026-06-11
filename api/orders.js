@@ -1,5 +1,5 @@
 const { Pool } = require('pg');
-const { withResponseTime, handleDbError } = require('./_lib/observe');
+const { logRequest, handleDbError } = require('./_lib/observe');
 const { verifyToken } = require('./_lib/auth');
 
 const pool = new Pool({
@@ -25,14 +25,12 @@ function toResponse(row) {
 }
 
 module.exports = async (req, res) => {
-  withResponseTime(res);
+  logRequest(req, res);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Max-Age', '86400');
   if (req.method === 'OPTIONS') return res.status(200).end();
-
-  console.log(`[${new Date().toISOString()}] INFO ${req.method} /api/orders`);
 
   try {
     await ensureTable();
