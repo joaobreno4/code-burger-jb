@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const { withResponseTime, handleDbError } = require('./_lib/observe');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -23,10 +24,13 @@ function toResponse(row) {
 }
 
 module.exports = async (req, res) => {
+  withResponseTime(res);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  console.log(`[${new Date().toISOString()}] INFO ${req.method} /api/orders`);
 
   try {
     await ensureTable();
@@ -50,6 +54,6 @@ module.exports = async (req, res) => {
 
     res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return handleDbError(res, err);
   }
 };

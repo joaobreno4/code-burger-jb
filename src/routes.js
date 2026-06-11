@@ -1,14 +1,19 @@
 const { Router } = require('express');
 const { Order } = require('./models');
 const menu = require('./data/menu.json');
+const { version } = require('../package.json');
 
 const router = Router();
 
-router.get('/', (req, res) => {
+router.get('/health', (_req, res) => {
+  return res.json({ status: 'ok', version });
+});
+
+router.get('/', (_req, res) => {
   return res.json({
     status: 'ok',
     message: 'Code-Burguer API running',
-    endpoints: ['GET /orders', 'POST /orders', 'PUT /orders/:id', 'DELETE /orders/:id'],
+    endpoints: ['GET /health', 'GET /menu', 'GET /orders', 'POST /orders', 'PUT /orders/:id', 'DELETE /orders/:id'],
   });
 });
 
