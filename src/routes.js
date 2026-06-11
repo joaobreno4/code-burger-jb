@@ -12,7 +12,7 @@ router.get('/health', (_req, res) => {
 router.get('/', (_req, res) => {
   return res.json({
     status: 'ok',
-    message: 'Code-Burguer API running',
+    message: 'Code-Burger API running',
     endpoints: ['GET /health', 'GET /menu', 'GET /orders', 'POST /orders', 'PUT /orders/:id', 'DELETE /orders/:id'],
   });
 });

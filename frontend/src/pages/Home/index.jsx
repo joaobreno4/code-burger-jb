@@ -35,7 +35,7 @@ export function Home() {
     <div className="container">
       <div className="card">
         <img src={devclubLogo} alt="DevClub" className="logo" />
-        <h1 className="title">Code<span>Burguer</span></h1>
+        <h1 className="title">Code<span>Burger</span></h1>
         <p className="subtitle">Monte seu pedido</p>
 
         <form onSubmit={handleNewOrder}>

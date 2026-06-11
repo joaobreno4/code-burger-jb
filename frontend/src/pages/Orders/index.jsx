@@ -52,7 +52,7 @@ export function Orders() {
       <div className="orders-wrapper">
         <header className="orders-header">
           <div>
-            <h1 className="orders-title">Code<span>Burguer</span></h1>
+            <h1 className="orders-title">Code<span>Burger</span></h1>
             <p className="orders-subtitle">Acompanhamento de pedidos</p>
           </div>
           <button className="btn-back" onClick={() => navigate('/')}>
