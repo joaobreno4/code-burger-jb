@@ -1,0 +1,7 @@
+[
+  { "id": 1, "name": "Monster", "description": "Duplo blend, queijo cheddar, bacon crocante" },
+  { "id": 2, "name": "Light",   "description": "Frango grelhado, alface, tomate, mostarda" },
+  { "id": 3, "name": "Mini",    "description": "Blend simples, queijo prato, picles" },
+  { "id": 4, "name": "Extreme", "description": "Triplo blend, onion rings, molho especial" },
+  { "id": 5, "name": "Vegan",   "description": "Burger de grão-de-bico, rúcula, maionese vegana" }
+]

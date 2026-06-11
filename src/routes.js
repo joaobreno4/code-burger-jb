@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { Order } = require('./models');
+const menu = require('./data/menu.json');
 
 const router = Router();
 
@@ -9,6 +10,10 @@ router.get('/', (req, res) => {
     message: 'Code-Burguer API running',
     endpoints: ['GET /orders', 'POST /orders', 'PUT /orders/:id', 'DELETE /orders/:id'],
   });
+});
+
+router.get('/menu', (_req, res) => {
+  return res.json(menu);
 });
 
 router.get('/orders', async (req, res) => {

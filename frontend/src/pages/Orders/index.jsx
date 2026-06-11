@@ -20,26 +20,31 @@ export function Orders() {
     });
   }, []);
 
-  async function handleUpdateStatus(id, currentStatus) {
+  async function changeStatus(id, currentStatus) {
     const nextStatus = STATUS_FLOW[currentStatus];
-
     if (!nextStatus) return;
 
-    await axios.put(`${BASE}/orders/${id}`, {
-      status: nextStatus,
-    });
-
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === id ? { ...order, status: nextStatus } : order
-      )
-    );
+    try {
+      await axios.put(`${BASE}/orders/${id}`, { status: nextStatus });
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.id === id ? { ...order, status: nextStatus } : order
+        )
+      );
+    } catch (err) {
+      console.error('Erro ao atualizar status:', err);
+      alert('Não foi possível atualizar o status. Tente novamente.');
+    }
   }
 
-  async function handleDeleteOrder(id) {
-    await axios.delete(`${BASE}/orders/${id}`);
-
-    setOrders((prev) => prev.filter((order) => order.id !== id));
+  async function deleteOrder(id) {
+    try {
+      await axios.delete(`${BASE}/orders/${id}`);
+      setOrders((prev) => prev.filter((order) => order.id !== id));
+    } catch (err) {
+      console.error('Erro ao deletar pedido:', err);
+      alert('Não foi possível deletar o pedido. Tente novamente.');
+    }
   }
 
   return (
@@ -75,7 +80,7 @@ export function Orders() {
                     <button
                       className="btn-action btn-advance"
                       title={`Avançar para "${STATUS_FLOW[item.status]}"`}
-                      onClick={() => handleUpdateStatus(item.id, item.status)}
+                      onClick={() => changeStatus(item.id, item.status)}
                     >
                       ✓
                     </button>
@@ -84,7 +89,7 @@ export function Orders() {
                   <button
                     className="btn-action btn-delete"
                     title="Deletar pedido"
-                    onClick={() => handleDeleteOrder(item.id)}
+                    onClick={() => deleteOrder(item.id)}
                   >
                     🗑
                   </button>
