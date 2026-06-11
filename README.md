@@ -2,34 +2,44 @@
 
 Sistema de gerenciamento de pedidos de uma hamburgueria, desenvolvido com Node.js + React durante o curso da DevClub.
 
+**Deploy:** https://code-burger-jb.vercel.app
+
 ## Tecnologias
 
-**Backend**
+**Backend (local)**
 - Node.js + Express 5
 - Sequelize ORM + PostgreSQL
 - UUID para identificadores de pedidos
 - CORS + nodemon
 
+**Backend (produção — Vercel)**
+- Vercel Serverless Functions (`api/`)
+- Neon Serverless PostgreSQL (via Vercel Marketplace)
+
 **Frontend**
 - React 19 + Vite
 - React Router DOM
 - Axios
+- Design responsivo (mobile-first, breakpoint 480px)
 
 ## Estrutura do projeto
 
 ```
 code-burger-jb/
-├── src/                    # Backend
-│   ├── config/database.js  # Configuração do Sequelize
-│   ├── models/             # Model Order (UUID, clientName, order, status)
-│   ├── routes.js           # Rotas REST da API
-│   └── server.js           # Entrypoint Express (porta 3001)
-└── frontend/               # Frontend React + Vite (porta 5173)
-    ├── public/favicon.png
-    └── src/
-        └── pages/
-            ├── Home/       # Formulário de novo pedido
-            └── Orders/     # Listagem e acompanhamento de pedidos
+├── api/                        # Vercel Serverless Functions (produção)
+│   ├── orders.js               # GET /api/orders, POST /api/orders
+│   └── orders/[id].js          # PUT /api/orders/:id, DELETE /api/orders/:id
+├── src/                        # Backend Express (desenvolvimento local)
+│   ├── config/database.js
+│   ├── models/
+│   ├── routes.js
+│   └── server.js               # Porta 3001
+├── frontend/                   # React + Vite (porta 5173)
+│   ├── public/favicon.png
+│   └── src/pages/
+│       ├── Home/               # Formulário de novo pedido
+│       └── Orders/             # Listagem e acompanhamento de pedidos
+└── vercel.json                 # Configuração de build e roteamento
 ```
 
 ## Pré-requisitos
@@ -37,7 +47,7 @@ code-burger-jb/
 - Node.js 18+
 - PostgreSQL rodando localmente
 
-## Configuração
+## Configuração local
 
 ### Banco de dados
 
@@ -77,18 +87,26 @@ npm install
 npm run dev
 ```
 
+O Vite já tem proxy configurado: chamadas para `/api/*` são redirecionadas automaticamente para `localhost:3001`.
+
 Acesse **http://localhost:5173**
+
+## Deploy (Vercel)
+
+O projeto está publicado em produção na Vercel com Neon como banco de dados serverless.
+
+**URL:** https://code-burger-jb.vercel.app
+
+A Vercel utiliza os arquivos em `api/` como Serverless Functions e o conteúdo de `frontend/dist` como site estático. O banco é provisionado automaticamente via integração Neon no Vercel Marketplace.
 
 ## API
 
-Base URL: `http://localhost:3001`
-
 | Método | Rota | Descrição |
 |--------|------|-----------|
-| `GET` | `/orders` | Lista todos os pedidos |
-| `POST` | `/orders` | Cria um novo pedido |
-| `PUT` | `/orders/:id` | Atualiza o status de um pedido |
-| `DELETE` | `/orders/:id` | Remove um pedido |
+| `GET` | `/api/orders` | Lista todos os pedidos |
+| `POST` | `/api/orders` | Cria um novo pedido |
+| `PUT` | `/api/orders/:id` | Atualiza o status de um pedido |
+| `DELETE` | `/api/orders/:id` | Remove um pedido |
 
 ### Fluxo de status
 
@@ -100,14 +118,14 @@ Em preparação → Pronto → Entregue
 
 **Criar pedido**
 ```bash
-curl -X POST http://localhost:3001/orders \
+curl -X POST https://code-burger-jb.vercel.app/api/orders \
   -H "Content-Type: application/json" \
   -d '{"clientName": "João", "order": "X-Burguer + Fritas"}'
 ```
 
 **Avançar status**
 ```bash
-curl -X PUT http://localhost:3001/orders/<id> \
+curl -X PUT https://code-burger-jb.vercel.app/api/orders/<id> \
   -H "Content-Type: application/json" \
   -d '{"status": "Pronto"}'
 ```
@@ -120,4 +138,4 @@ curl -X PUT http://localhost:3001/orders/<id> \
 
 **Home** — cliente preenche nome e descrição do pedido e submete o formulário.
 
-**Orders** — lista todos os pedidos vindos do banco em tempo real. Exibe "Nenhum pedido encontrado." quando a lista está vazia. Cada card permite avançar o status ou deletar o pedido.
+**Orders** — lista todos os pedidos vindos do banco em tempo real. Exibe "Nenhum pedido encontrado." quando a lista está vazia. Cada card permite avançar o status ou deletar o pedido. Layout responsivo: em mobile os cards empilham verticalmente.
