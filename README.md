@@ -114,6 +114,10 @@ curl -X PUT http://localhost:3001/orders/<id> \
 
 ## Telas
 
+| Home | Orders |
+|------|--------|
+| ![Home](.github/screenshots/home.png) | ![Orders](.github/screenshots/orders.png) |
+
 **Home** — cliente preenche nome e descrição do pedido e submete o formulário.
 
 **Orders** — lista todos os pedidos vindos do banco em tempo real. Exibe "Nenhum pedido encontrado." quando a lista está vazia. Cada card permite avançar o status ou deletar o pedido.
