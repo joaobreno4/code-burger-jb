@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Least-privilege: this workflow only needs to read the repo.
+permissions:
+  contents: read
+
+jobs:
+  lint-and-test:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── Setup ────────────────────────────────────────────────────────────────
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # ── Backend ──────────────────────────────────────────────────────────────
+
+      - name: Cache backend node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-backend-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-backend-
+
+      - name: Install backend dependencies
+        run: npm ci
+
+      - name: Lint backend (ESLint)
+        run: npm run lint
+
+      # ── Frontend ─────────────────────────────────────────────────────────────
+
+      - name: Cache frontend node_modules
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint frontend (ESLint + React rules)
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Build frontend (Vite)
+        working-directory: frontend
+        run: npm run build
