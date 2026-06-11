@@ -10,28 +10,50 @@ const STATUS_FLOW = {
 
 const BASE = import.meta.env.VITE_API_URL ?? '/api';
 
+function authHeaders() {
+  const token = localStorage.getItem('codeburger_token');
+  return { Authorization: `Bearer ${token}` };
+}
+
 export function Orders() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    axios.get(`${BASE}/orders`).then((response) => {
-      setOrders(response.data);
-    });
-  }, []);
+    const token = localStorage.getItem('codeburger_token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    axios
+      .get(`${BASE}/orders`, { headers: authHeaders() })
+      .then((response) => setOrders(response.data))
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          localStorage.removeItem('codeburger_token');
+          navigate('/login');
+        }
+      });
+  }, [navigate]);
 
   async function changeStatus(id, currentStatus) {
     const nextStatus = STATUS_FLOW[currentStatus];
     if (!nextStatus) return;
 
     try {
-      await axios.put(`${BASE}/orders/${id}`, { status: nextStatus });
+      await axios.put(`${BASE}/orders/${id}`, { status: nextStatus }, { headers: authHeaders() });
       setOrders((prev) =>
         prev.map((order) =>
           order.id === id ? { ...order, status: nextStatus } : order
         )
       );
     } catch (err) {
+      if (err.response?.status === 401) {
+        localStorage.removeItem('codeburger_token');
+        navigate('/login');
+        return;
+      }
       console.error('Erro ao atualizar status:', err);
       alert('Não foi possível atualizar o status. Tente novamente.');
     }
@@ -39,12 +61,22 @@ export function Orders() {
 
   async function deleteOrder(id) {
     try {
-      await axios.delete(`${BASE}/orders/${id}`);
+      await axios.delete(`${BASE}/orders/${id}`, { headers: authHeaders() });
       setOrders((prev) => prev.filter((order) => order.id !== id));
     } catch (err) {
+      if (err.response?.status === 401) {
+        localStorage.removeItem('codeburger_token');
+        navigate('/login');
+        return;
+      }
       console.error('Erro ao deletar pedido:', err);
       alert('Não foi possível deletar o pedido. Tente novamente.');
     }
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('codeburger_token');
+    navigate('/login');
   }
 
   return (
@@ -55,9 +87,14 @@ export function Orders() {
             <h1 className="orders-title">Code<span>Burger</span></h1>
             <p className="orders-subtitle">Acompanhamento de pedidos</p>
           </div>
-          <button className="btn-back" onClick={() => navigate('/')}>
-            ← Voltar
-          </button>
+          <div className="orders-header-actions">
+            <button className="btn-back" onClick={() => navigate('/')}>
+              ← Voltar
+            </button>
+            <button className="btn-logout" onClick={handleLogout}>
+              Sair
+            </button>
+          </div>
         </header>
 
         {orders.length === 0 ? (

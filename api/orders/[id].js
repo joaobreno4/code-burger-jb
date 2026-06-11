@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 const { withResponseTime, handleDbError } = require('../_lib/observe');
+const { verifyToken } = require('../_lib/auth');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -10,12 +11,10 @@ module.exports = async (req, res) => {
   withResponseTime(res);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Max-Age', '86400');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // req.query.id is injected by Vercel's dynamic routing from the [id] filename.
-  // Log full context upfront so every request is visible in the Vercel log panel.
   const { id } = req.query;
   console.log(
     `[${new Date().toISOString()}] ${req.method} /api/orders/${id ?? 'MISSING'} | ` +
@@ -26,12 +25,13 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Missing order id in request path.' });
   }
 
+  if (!verifyToken(req)) {
+    return res.status(401).json({ error: 'Token de autenticação necessário.' });
+  }
+
   try {
     if (req.method === 'PUT') {
-      // Guard against unparsed or missing body — Vercel auto-parses JSON bodies
-      // when Content-Type is application/json, but we defend just in case.
       const { status } = req.body || {};
-
       if (!status) {
         console.warn(`[WARN] PUT /api/orders/${id} — missing status in body`);
         return res.status(400).json({ error: 'status is required' });

@@ -36,6 +36,12 @@
   margin-top: 4px;
 }
 
+.orders-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .btn-back {
   background-color: transparent;
   border: 1px solid #3a3939;
@@ -53,6 +59,25 @@
 .btn-back:hover {
   background-color: #1a1919;
   border-color: #dda15e;
+}
+
+.btn-logout {
+  background-color: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.btn-logout:hover {
+  background-color: rgba(239, 68, 68, 0.08);
+  border-color: #ef4444;
 }
 
 .orders-empty {
@@ -193,7 +218,8 @@
     font-size: 0.72rem;
   }
 
-  .btn-back {
+  .btn-back,
+  .btn-logout {
     padding: 8px 14px;
     font-size: 0.8rem;
   }
