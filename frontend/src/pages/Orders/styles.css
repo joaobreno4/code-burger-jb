@@ -179,3 +179,42 @@
   border-color: rgba(239, 68, 68, 0.4);
   color: #ef4444;
 }
+
+@media (max-width: 480px) {
+  .orders-container {
+    padding: 24px 16px;
+  }
+
+  .orders-title {
+    font-size: 1.35rem;
+  }
+
+  .orders-subtitle {
+    font-size: 0.72rem;
+  }
+
+  .btn-back {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+
+  .order-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .order-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .order-client {
+    white-space: normal;
+  }
+
+  .order-description {
+    white-space: normal;
+  }
+}

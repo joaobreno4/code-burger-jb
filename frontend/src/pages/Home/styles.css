@@ -104,3 +104,13 @@ button[type='submit'] {
 button[type='submit']:hover {
   background-color: #ae2012;
 }
+
+@media (max-width: 480px) {
+  .card {
+    padding: 32px 24px;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+}
