@@ -1,5 +1,5 @@
 const { Pool } = require('pg');
-const { withResponseTime, handleDbError } = require('../_lib/observe');
+const { logRequest, handleDbError, jsonLog } = require('../_lib/observe');
 const { verifyToken } = require('../_lib/auth');
 
 const pool = new Pool({
@@ -8,7 +8,7 @@ const pool = new Pool({
 });
 
 module.exports = async (req, res) => {
-  withResponseTime(res);
+  logRequest(req, res);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -16,10 +16,6 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { id } = req.query;
-  console.log(
-    `[${new Date().toISOString()}] ${req.method} /api/orders/${id ?? 'MISSING'} | ` +
-    `body=${JSON.stringify(req.body ?? null)} | query=${JSON.stringify(req.query)}`
-  );
 
   if (!id) {
     return res.status(400).json({ error: 'Missing order id in request path.' });
@@ -32,8 +28,9 @@ module.exports = async (req, res) => {
   try {
     if (req.method === 'PUT') {
       const { status } = req.body || {};
+
       if (!status) {
-        console.warn(`[WARN] PUT /api/orders/${id} — missing status in body`);
+        jsonLog('warn', { message: 'PUT /api/orders — missing status in body', orderId: id });
         return res.status(400).json({ error: 'status is required' });
       }
 
@@ -43,12 +40,11 @@ module.exports = async (req, res) => {
       );
 
       if (!rowCount) {
-        console.warn(`[WARN] PUT /api/orders/${id} — order not found`);
+        jsonLog('warn', { message: 'PUT /api/orders — order not found', orderId: id });
         return res.status(404).json({ error: 'Order not found' });
       }
 
       const r = rows[0];
-      console.log(`[INFO] PUT /api/orders/${id} — updated to status="${status}"`);
       return res.json({ id: r.id, clientName: r.client_name, order: r.order, status: r.status });
     }
 
@@ -56,20 +52,15 @@ module.exports = async (req, res) => {
       const { rowCount } = await pool.query('DELETE FROM orders WHERE id = $1', [id]);
 
       if (!rowCount) {
-        console.warn(`[WARN] DELETE /api/orders/${id} — order not found`);
+        jsonLog('warn', { message: 'DELETE /api/orders — order not found', orderId: id });
         return res.status(404).json({ error: 'Order not found' });
       }
 
-      console.log(`[INFO] DELETE /api/orders/${id} — removed`);
       return res.status(204).end();
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
-    console.error(
-      `[ERROR] ${req.method} /api/orders/${id} — ${err.message}\n` +
-      `  code=${err.code} stack=${err.stack}`
-    );
     return handleDbError(res, err);
   }
 };
