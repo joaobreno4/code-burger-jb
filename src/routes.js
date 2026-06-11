@@ -1,14 +1,13 @@
 const { Router } = require('express');
 const jwt = require('jsonwebtoken');
-const { Order } = require('./models');
+const bcrypt = require('bcryptjs');
+const { Order, User } = require('./models');
 const menu = require('./data/menu.json');
 const { requireAuth } = require('./middleware/auth');
 const { version } = require('../package.json');
 
 const router = Router();
 const SECRET = process.env.JWT_SECRET || 'codeburger-dev-secret-change-in-prod';
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'admin123';
 
 router.get('/health', (_req, res) => {
   return res.json({ status: 'ok', version });
@@ -22,13 +21,22 @@ router.get('/', (_req, res) => {
   });
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   const { username, password } = req.body || {};
-  if (username !== ADMIN_USER || password !== ADMIN_PASS) {
-    return res.status(401).json({ error: 'Credenciais inválidas.' });
+  if (!username || !password) {
+    return res.status(400).json({ error: 'username e password são obrigatórios.' });
   }
-  const token = jwt.sign({ sub: username, role: 'admin' }, SECRET, { expiresIn: '8h' });
-  return res.json({ token });
+  try {
+    const user = await User.findOne({ where: { username } });
+    const valid = user !== null && await bcrypt.compare(password, user.passwordHash);
+    if (!valid) {
+      return res.status(401).json({ error: 'Credenciais inválidas.' });
+    }
+    const token = jwt.sign({ sub: user.username, role: 'admin' }, SECRET, { expiresIn: '8h' });
+    return res.json({ token });
+  } catch (_err) {
+    return res.status(500).json({ error: 'Erro interno ao autenticar.' });
+  }
 });
 
 router.get('/menu', (_req, res) => {
