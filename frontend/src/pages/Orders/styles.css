@@ -1,0 +1,181 @@
+.orders-container {
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  padding: 40px 24px;
+}
+
+.orders-wrapper {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.orders-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 36px;
+}
+
+.orders-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+.orders-title span {
+  color: #dda15e;
+}
+
+.orders-subtitle {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+.btn-back {
+  background-color: transparent;
+  border: 1px solid #3a3939;
+  color: #dda15e;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background-color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.btn-back:hover {
+  background-color: #1a1919;
+  border-color: #dda15e;
+}
+
+.orders-empty {
+  color: #666;
+  text-align: center;
+  font-size: 0.95rem;
+  margin-top: 60px;
+}
+
+.orders-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.order-card {
+  background-color: #1a1919;
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s;
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+}
+
+.order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.order-client {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.order-description {
+  font-size: 0.875rem;
+  color: #aaaaaa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Área direita do card ── */
+
+.order-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Badge de status com variantes de cor */
+
+.order-status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.order-status--preparing {
+  background-color: rgba(221, 161, 94, 0.12);
+  color: #dda15e;
+  border-color: rgba(221, 161, 94, 0.3);
+}
+
+.order-status--ready {
+  background-color: rgba(74, 222, 128, 0.1);
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.order-status--delivered {
+  background-color: rgba(148, 163, 184, 0.1);
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+/* Botões de ação */
+
+.btn-action {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid #3a3939;
+  background-color: #2b2a2a;
+  color: #aaaaaa;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-advance:hover {
+  background-color: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.4);
+  color: #4ade80;
+}
+
+.btn-delete:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}

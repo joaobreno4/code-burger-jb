@@ -1,0 +1,106 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.card {
+  background-color: #1a1919;
+  border-radius: 16px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7);
+}
+
+.logo {
+  display: block;
+  max-width: 130px;
+  width: 100%;
+  margin: 0 auto 24px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.title span {
+  color: #dda15e;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #888;
+  text-align: center;
+  margin-top: 6px;
+  margin-bottom: 36px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #dda15e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.field input {
+  background-color: #2b2a2a;
+  border: 1px solid #3a3939;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  padding: 14px 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field input::placeholder {
+  color: #666;
+}
+
+.field input:focus {
+  border-color: #dda15e;
+}
+
+button[type='submit'] {
+  width: 100%;
+  margin-top: 12px;
+  padding: 16px;
+  background-color: #9b2226;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: background-color 0.2s;
+}
+
+button[type='submit']:hover {
+  background-color: #ae2012;
+}
