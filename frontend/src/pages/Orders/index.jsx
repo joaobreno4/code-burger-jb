@@ -8,12 +8,14 @@ const STATUS_FLOW = {
   'Pronto': 'Entregue',
 };
 
+const BASE = import.meta.env.VITE_API_URL ?? '/api';
+
 export function Orders() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/orders').then((response) => {
+    axios.get(`${BASE}/orders`).then((response) => {
       setOrders(response.data);
     });
   }, []);
@@ -23,7 +25,7 @@ export function Orders() {
 
     if (!nextStatus) return;
 
-    await axios.put(`http://localhost:3001/orders/${id}`, {
+    await axios.put(`${BASE}/orders/${id}`, {
       status: nextStatus,
     });
 
@@ -35,7 +37,7 @@ export function Orders() {
   }
 
   async function handleDeleteOrder(id) {
-    await axios.delete(`http://localhost:3001/orders/${id}`);
+    await axios.delete(`${BASE}/orders/${id}`);
 
     setOrders((prev) => prev.filter((order) => order.id !== id));
   }

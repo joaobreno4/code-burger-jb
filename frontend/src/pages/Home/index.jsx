@@ -12,7 +12,8 @@ export function Home() {
   async function handleNewOrder(event) {
     event.preventDefault();
 
-    await axios.post('http://localhost:3001/orders', { clientName, order });
+    const base = import.meta.env.VITE_API_URL ?? '/api';
+    await axios.post(`${base}/orders`, { clientName, order });
 
     alert(`Pedido de ${clientName} realizado com sucesso!`);
     setClientName('');
