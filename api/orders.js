@@ -1,5 +1,6 @@
 const { Pool } = require('pg');
 const { withResponseTime, handleDbError } = require('./_lib/observe');
+const { verifyToken } = require('./_lib/auth');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -27,7 +28,7 @@ module.exports = async (req, res) => {
   withResponseTime(res);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Max-Age', '86400');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
@@ -37,6 +38,9 @@ module.exports = async (req, res) => {
     await ensureTable();
 
     if (req.method === 'GET') {
+      if (!verifyToken(req)) {
+        return res.status(401).json({ error: 'Token de autenticação necessário.' });
+      }
       const { rows } = await pool.query('SELECT * FROM orders ORDER BY created_at ASC');
       return res.json(rows.map(toResponse));
     }
